@@ -1,0 +1,26 @@
+{
+  "name": "http-service-wrapper",
+  "version": "1.1.0",
+  "description": "Abstract HTTP service implementation with interception points for methord GET, POST, PUT, DELETE",
+  "main": "index.js",
+  "dependencies": {
+    "@angular/http": "^4.0.0",
+    "@angular/core": "^4.0.0",
+    "@angular/common": "^4.0.0",
+    "@angular/platform-browser": "^4.0.0",
+    "rxjs": "^5.1.0",
+    "zone.js": "^0.8.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "http",
+    "service",
+    "interceptor",
+    "injection"
+  ],
+  "author": "adutra",
+  "license": "MIT"
+}
