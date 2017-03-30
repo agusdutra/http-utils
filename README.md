@@ -5,3 +5,9 @@ Abstract Extension of @angular/http with implementation for methods GET, POST, P
 Available for download: 
 
 npm install http-utils 
+
+
+-requestInterceptor
+-onSubscribeSuccess
+-onSubscribeError
+-onFinally
