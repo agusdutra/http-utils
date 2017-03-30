@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {Subject} from "rxjs";
+import {Observable} from "../node_modules/rxjs/Observable";
 /**
  * Created by agusdutra on 28/1/17.
  *
@@ -10,34 +11,52 @@ import {Subject} from "rxjs";
  */
 @Injectable()
 export class LoaderService {
-  private loaderSubject = new Subject<LoaderState>();
-  loaderState = this.loaderSubject.asObservable();
+    get excludedPaths(): string[] {
+        return this._excludedPaths;
+    }
 
-  callingCount: number = 0;
+    private loaderSubject = new Subject<LoaderState>();
+    loaderState = this.loaderSubject.asObservable();
+    callingCount: number = 0;
 
-  /**
-   * Llamada cuando comienza ejecucion de llamada a Servicio. Setea el estado en true
-   */
-  showPreloader() {
-    this.callingCount++;
-    this.loaderSubject.next(<LoaderState>{callingCount: this.callingCount});
-  };
+    private _excludedPaths: string[] = [];
 
-  /**
-   * Llamado cuando finaliza llamada a Servicio HTTP. Setea el estado en false.
-   */
-  hidePreloader() {
-    this.callingCount--;
-    this.loaderSubject.next(<LoaderState>{callingCount: this.callingCount});
-  };
+    constructor() {
+        this._excludedPaths = [];
+        this.callingCount = 0;
+    }
+
+    /**
+     * Llamada cuando comienza ejecucion de llamada a Servicio. Setea el estado en true
+     */
+    showPreloader(url?: string) {
+        if (!this.excludedPaths.find(f => f == url)) {
+            this.callingCount++
+            this.loaderSubject.next(<LoaderState>{callingCount: this.callingCount});
+        }
+    };
+
+    /**
+     * Llamado cuando finaliza llamada a Servicio HTTP. Setea el estado en false.
+     */
+    hidePreloader(url?: string) {
+        if (!this.excludedPaths.find(f => f == url)) {
+            this.callingCount--;
+            this.loaderSubject.next(<LoaderState>{callingCount: this.callingCount});
+        }
+    };
+
+    addExcludedPath(url: string) {
+        this.excludedPaths.push(url);
+    }
 }
 
 export class LoaderState {
 
-  show(): boolean {
-    return this.callingCount != 0;
-  }
+    show(): boolean {
+        return this.callingCount != 0;
+    }
 
-  callingCount: number = 0;
+    callingCount: number = 0;
 
 }

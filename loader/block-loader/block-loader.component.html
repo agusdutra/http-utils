@@ -1,8 +1,8 @@
 <div [class.loader-hidden]="!show">
-  <div class="loader-overlay">
-    <div class="loader-spinner"  [class.icon-hidden]="!showIcon">
-      <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
-      <span class="sr-only">Loading...</span>
+    <div class="loader-overlay">
+        <div class="loader-spinner" [class.icon-hidden]="!showIcon">
+            <i class="{{iconClasses}}"></i>
+            <span class="sr-only">Loading...</span>
+        </div>
     </div>
-  </div>
 </div>
