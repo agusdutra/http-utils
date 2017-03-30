@@ -1,0 +1,34 @@
+.loader-hidden {
+  visibility: hidden;
+}
+
+.icon-hidden {
+  visibility: hidden;
+}
+
+.loader-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 1;
+  z-index: 500000;
+  background: rgba(186, 186, 186, 0.18);;
+}
+
+.loader-spinner {
+  position: absolute;
+  left: 45%;
+  top: 45%;
+
+}
+
+.fa-spinner {
+  color: #333;
+}
+
+.fa-spin {
+  -webkit-animation: fa-spin 1s infinite linear;
+  animation: fa-spin 1s infinite linear;
+}
