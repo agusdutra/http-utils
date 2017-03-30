@@ -1,7 +1,7 @@
-import {NgModule} from "../node_modules/@angular/core/src/metadata/ng_module";
+import {NgModule} from "@angular/core";
 import {BlockLoaderComponent} from "./block-loader/block-loader.component";
-import {BrowserModule} from "../node_modules/@angular/platform-browser/src/browser";
-import {HttpModule} from "../node_modules/@angular/http/src/http_module";
+import {BrowserModule} from "@angular/platform-browser";
+import {HttpModule} from "@angular/http";
 import {LoaderService} from "./loader.service";
 /**
  * Created by agusdutra on 28/1/17.

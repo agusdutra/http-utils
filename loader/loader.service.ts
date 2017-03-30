@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Subject} from "rxjs";
-import {Observable} from "../node_modules/rxjs/Observable";
+import {Subject, Observable} from "rxjs";
 /**
  * Created by agusdutra on 28/1/17.
  *
