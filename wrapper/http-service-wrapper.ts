@@ -1,6 +1,6 @@
-import {Http, RequestOptionsArgs, XHRBackend, Headers, Response, Request, RequestOptions} from "@angular/http";
-import {Observable} from "rxjs";
-import {Injectable} from "@angular/core";
+import {Http, RequestOptionsArgs, XHRBackend, Headers, Response, Request, RequestOptions} from '@angular/http'
+import {Observable} from 'rxjs';
+import {Injectable} from '@angular/core';
 
 /**
  * Clase que extiende HTTP, hace todas las llamadas igual, pero las wrappea para interceptar
