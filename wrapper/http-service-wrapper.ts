@@ -78,7 +78,7 @@ export abstract class AbstractHttpService extends Http {
      * @param options
      * @returns {Observable<>}
      */
-    put(url: string, body: string, options?: RequestOptionsArgs): Observable<any> {
+    put(url: string, body: any, options?: RequestOptionsArgs): Observable<any> {
         this.requestInterceptorPUT();
         return super.put(url, body, this.requestOptionsPUT(options))
             .catch(this.onCatch)
@@ -234,29 +234,6 @@ export abstract class AbstractHttpService extends Http {
     }
 
     protected requestInterceptorDELETE() {
-        this.requestInterceptor();
-    }
-
-
-    /**
-     * Intercepta la respuesta, oculta preloader
-     */
-    public abstract responseInterceptor(): void;
-
-
-    public responseInterceptorGET() {
-        this.requestInterceptor();
-    }
-
-    public responseInterceptorPOST() {
-        this.requestInterceptor();
-    }
-
-    public responseInterceptorPUT() {
-        this.requestInterceptor();
-    }
-
-    public responseInterceptorDELETE() {
         this.requestInterceptor();
     }
 
