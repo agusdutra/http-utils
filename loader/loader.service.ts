@@ -31,7 +31,7 @@ export class LoaderService {
      *
      */
     beginCall(url?: string) {
-        if (!this.excludedPaths.find(f => f === url)) {
+        if (!this.isExcluded(url)) {
             this.callingCount++;
             this.loaderSubject.next(<LoaderState>{callingCount: this.callingCount});
         }
@@ -43,11 +43,15 @@ export class LoaderService {
      * reduce el contador y notifica a los subscriptores.
      */
     endCall(url?: string) {
-        if (!this.excludedPaths.find(f => f === url)) {
+        if (!this.isExcluded(url)) {
             this.callingCount--;
             this.loaderSubject.next(<LoaderState>{callingCount: this.callingCount});
         }
     };
+
+    private isExcluded(url) {
+        return this.excludedPaths.find(f => f === url);
+    }
 
     addExcludedPath(url: string) {
         this.excludedPaths.push(url);
