@@ -24,32 +24,36 @@ import {LoaderService, LoaderState} from "../loader.service";
 })
 export class BlockLoaderComponent implements OnInit, OnDestroy {
 
-    show = false;
     private subscription: Subscription;
 
+    /**
+     * set true cuando no se quiere mostrar el loader por más que se esté realizando una llamada.
+     * @type {boolean}
+     */
     @Input()
     enabled: boolean = true;
 
-    @Input()
-    showIcon: boolean = false;
+    showLoader: boolean = false;
 
+    /*    @Input()
+     overlayBackground: string = "#BABABA";*/
 
-    @Input()
-    overlayBackground: string = "#BABABA";
-
+    /**
+     * clases que se utilizan para el icono que se muestra como loader.
+     * @type {string}
+     */
     @Input()
     iconClasses: string = "fa fa-circle-o-notch fa-spin fa-3x fa-fw";
 
 
     constructor(private loaderService: LoaderService) {
         this.enabled = true;
-        this.showIcon = false;
+        this.showLoader = false;
     }
 
     ngOnInit() {
         this.subscription = this.loaderService.loaderState.subscribe((state: LoaderState) => {
-            this.show = state.callingCount != 0;
-            this.showIcon = this.show && this.enabled;
+            this.showLoader = state.callingCount != 0 && this.enabled;
         });
     }
 
