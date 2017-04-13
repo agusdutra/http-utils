@@ -3,8 +3,9 @@ import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 
 /**
- * Clase que extiende HTTP, hace todas las llamadas igual, pero las wrappea para interceptar
- * las llamadas y poder realizar acciones personalizadas de forma genérica para todas las llamadas al backend.
+ * Clase que extiende HTTP, hace todas las llamadas de la misma forma, pero las wrappea para tener puntos de intercepción
+ * en las llamadas, de forma de que se puedan realizar acciones personalizadas de forma genérica para todas las Requests HTTP,
+ * o separandolas por tipo. Además se pueden agregar Headers de forma genérica para todas las llamadas.
  */
 
 @Injectable()
@@ -23,13 +24,13 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<Response>}
      */
     request(url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
-        this.requestInterceptor(url);
+        this.onBefore(url);
         return super.request(url, this.requestOptions(options))
             .catch(this.onCatch)
             .do((res: Response) => {
-                this.onSubscribeSuccess(res);
+                this.onSuccess(res);
             }, (error: any) => {
-                this.onSubscribeError(error);
+                this.onError(error);
             })
             .finally(() => {
                 this.onFinally(url);
@@ -44,13 +45,13 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<>}
      */
     get(url: string, options?: RequestOptionsArgs): Observable<any> {
-        this.requestInterceptorGET(url);
+        this.onBeforeGET(url);
         return super.get(url, this.requestOptionsGET(options))
             .catch(this.onCatch)
             .do((res: Response) => {
-                this.onSubscribeSuccessGET(res);
+                this.onSuccessGET(res);
             }, (error: any) => {
-                this.onSubscribeErrorGET(error);
+                this.onErrorGET(error);
             })
             .finally(() => {
                 this.onFinallyGET(url);
@@ -66,13 +67,13 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<>}
      */
     post(url: string, body: any, options?: RequestOptionsArgs): Observable<any> {
-        this.requestInterceptorPOST(url);
+        this.onBeforePOST(url);
         return super.post(url, body, this.requestOptionsPOST(options))
             .catch(this.onCatch)
             .do((res: Response) => {
-                this.onSubscribeSuccessPOST(res);
+                this.onSuccessPOST(res);
             }, (error: any) => {
-                this.onSubscribeErrorPOST(error);
+                this.onErrorPOST(error);
             })
             .finally(() => {
                 this.onFinallyPOST(url);
@@ -88,13 +89,13 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<>}
      */
     put(url: string, body: any, options?: RequestOptionsArgs): Observable<any> {
-        this.requestInterceptorPUT(url);
+        this.onBeforePUT(url);
         return super.put(url, body, this.requestOptionsPUT(options))
             .catch(this.onCatch)
             .do((res: Response) => {
-                this.onSubscribeSuccessPUT(res);
+                this.onSuccessPUT(res);
             }, (error: any) => {
-                this.onSubscribeErrorPUT(error);
+                this.onErrorPUT(error);
             })
             .finally(() => {
                 this.onFinallyPUT(url);
@@ -109,13 +110,13 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<>}
      */
     delete(url: string, options?: RequestOptionsArgs): Observable<any> {
-        this.requestInterceptorDELETE(url);
+        this.onBeforeDELETE(url);
         return super.delete(url, this.requestOptionsDELETE(options))
             .catch(this.onCatch)
             .do((res: Response) => {
-                this.onSubscribeSuccessDELETE(res);
+                this.onSuccessDELETE(res);
             }, (error: any) => {
-                this.onSubscribeErrorDELETE(error);
+                this.onErrorDELETE(error);
             })
             .finally(() => {
                 this.onFinallyDELETE(url);
@@ -153,22 +154,22 @@ export abstract class AbstractHttpService extends Http {
     /**
      * Intercepta la llamada, muestra preloader
      */
-    protected abstract requestInterceptor(url): void;
+    protected abstract onBefore(url): void;
 
-    protected requestInterceptorGET(url) {
-        this.requestInterceptor(url);
+    protected onBeforeGET(url) {
+        this.onBefore(url);
     }
 
-    protected requestInterceptorPOST(url) {
-        this.requestInterceptor(url);
+    protected onBeforePOST(url) {
+        this.onBefore(url);
     }
 
-    protected requestInterceptorPUT(url) {
-        this.requestInterceptor(url);
+    protected onBeforePUT(url) {
+        this.onBefore(url);
     }
 
-    protected requestInterceptorDELETE(url) {
-        this.requestInterceptor(url);
+    protected onBeforeDELETE(url) {
+        this.onBefore(url);
     }
 
 
@@ -186,44 +187,44 @@ export abstract class AbstractHttpService extends Http {
      * Intercepta la llamada cuando retorna success
      * @param res
      */
-    protected abstract onSubscribeSuccess(res: Response): void;
+    protected abstract onSuccess(res: Response): void;
 
-    protected  onSubscribeSuccessGET(res: Response): void {
-        this.onSubscribeSuccess(res);
+    protected  onSuccessGET(res: Response): void {
+        this.onSuccess(res);
     }
 
-    protected  onSubscribeSuccessPOST(res: Response): void {
-        this.onSubscribeSuccess(res);
+    protected  onSuccessPOST(res: Response): void {
+        this.onSuccess(res);
     }
 
-    protected  onSubscribeSuccessPUT(res: Response): void {
-        this.onSubscribeSuccess(res);
+    protected  onSuccessPUT(res: Response): void {
+        this.onSuccess(res);
     }
 
-    protected  onSubscribeSuccessDELETE(res: Response): void {
-        this.onSubscribeSuccess(res);
+    protected  onSuccessDELETE(res: Response): void {
+        this.onSuccess(res);
     }
 
     /**
      * Intercepta errores de llamada
      * @param error
      */
-    protected abstract onSubscribeError(error: any): void;
+    protected abstract onError(error: any): void;
 
-    protected onSubscribeErrorGET(error: any): void {
-        this.onSubscribeError(error);
+    protected onErrorGET(error: any): void {
+        this.onError(error);
     }
 
-    protected onSubscribeErrorPOST(error: any): void {
-        this.onSubscribeError(error);
+    protected onErrorPOST(error: any): void {
+        this.onError(error);
     }
 
-    protected onSubscribeErrorPUT(error: any): void {
-        this.onSubscribeError(error);
+    protected onErrorPUT(error: any): void {
+        this.onError(error);
     }
 
-    protected onSubscribeErrorDELETE(error: any): void {
-        this.onSubscribeError(error);
+    protected onErrorDELETE(error: any): void {
+        this.onError(error);
     }
 
     /**
