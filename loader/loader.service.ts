@@ -68,8 +68,12 @@ export class LoaderService {
     }
 
     private isExcluded(url): boolean {
-        let pathArray = this.splitUrl(url);
-        return this.isExcludedRecursive(pathArray, this.excludedPaths);
+        if (url && this.excludedPaths.length > 0) {
+            let pathArray = this.splitUrl(url);
+            return this.isExcludedRecursive(pathArray, this.excludedPaths);
+        } else {
+            return false;
+        }
     }
 
     private isExcludedRecursive(path: string[], excludedPaths: Paths[]): boolean {
@@ -123,12 +127,16 @@ export class LoaderService {
     }
 
     private splitUrl(url: string): string[] {
-        console.log(url);
-        url = url.replace(HTTP_PATTERN, '');
-        console.log(url);
-        url = url.replace(HTTPS_PATTERN, '');
-        let pathArray: string[] = url.split('/');
-        return pathArray;
+        if (url) {
+            console.log(url);
+            url = url.replace(HTTP_PATTERN, '');
+            console.log(url);
+            url = url.replace(HTTPS_PATTERN, '');
+            let pathArray: string[] = url.split('/');
+            return pathArray;
+        } else {
+            return null;
+        }
     }
 }
 
