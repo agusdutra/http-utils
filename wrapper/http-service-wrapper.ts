@@ -18,27 +18,6 @@ export abstract class AbstractHttpService extends Http {
     }
 
     /**
-     * Performs any type of http request.
-     * @param url
-     * @param options
-     * @returns {Observable<Response>}
-     */
-    request(url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
-        this.onBefore(url);
-        return super.request(url, this.requestOptions(options))
-            .catch(this.onCatch)
-            .do((res: Response) => {
-                this.onSuccess(res);
-            }, (error: any) => {
-                this.onError(error);
-            })
-            .finally(() => {
-                this.onFinally(url);
-            });
-    }
-
-
-    /**
      * Performs a request with `get` http method.
      * @param url
      * @param options
