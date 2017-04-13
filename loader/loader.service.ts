@@ -7,16 +7,24 @@ import {Subject, Observable} from 'rxjs';
  * la aplicación con respecto a las llamadas HTTP
  *
  */
+export const ID_PATTERN = ':id'
+export const HTTP_PATTERN = 'http://';
+export const HTTPS_PATTERN = 'https://';
+
+export interface Paths {
+    base: string;
+    children: Paths[];
+}
 @Injectable()
 export class LoaderService {
 
     private loaderSubject = new Subject<LoaderState>();
-    private _excludedPaths: string[] = [];
+    private _excludedPaths: Paths[] = [];
 
     loaderState = this.loaderSubject.asObservable();
     callingCount = 0;
 
-    get excludedPaths(): string[] {
+    get excludedPaths(): Paths[] {
         return this._excludedPaths;
     }
 
@@ -49,16 +57,78 @@ export class LoaderService {
         }
     };
 
-    private isExcluded(url) {
-        return this.excludedPaths.find(f => f === url);
-    }
-
-    addExcludedPath(url: string) {
-        this.excludedPaths.push(url);
+    public addExcludedPath(url: string) {
+        let pathArray = this.splitUrl(url);
+        this.addPathRecursive(pathArray, this.excludedPaths);
     }
 
     removeExcludedPath(url: string) {
-        this.excludedPaths.push(url);
+        let pathArray = this.splitUrl(url);
+        this.removeExcludedPathRecurisve(pathArray, this.excludedPaths);
+    }
+
+    private isExcluded(url): boolean {
+        let pathArray = this.splitUrl(url);
+        return this.isExcludedRecursive(pathArray, this.excludedPaths);
+    }
+
+    private isExcludedRecursive(path: string[], excludedPaths: Paths[]): boolean {
+        let base = path.shift();
+        if (base) {
+            if (!isNaN(parseInt(base))) {
+                base = ID_PATTERN;
+            }
+            let excluded: Paths = excludedPaths.find(f => f.base == base);
+            if (excluded && excluded.children && excluded.children.length > 0) {
+                return this.isExcludedRecursive(path, excluded.children);
+            } else if (excluded && ( !excluded.children || excluded.children.length == 0)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private addPathRecursive(path: string[], excludedPaths: Paths[]) {
+        let base = path.shift();
+        if (base) {
+            if (!isNaN(parseInt(base))) {
+                base = ID_PATTERN;
+            }
+            let excluded: Paths = excludedPaths.find(f => f.base == base);
+            if (!excluded) {
+                excluded = {base: base, children: []};
+                excludedPaths.push(excluded);
+            }
+            this.addPathRecursive(path, excluded.children);
+        }
+    }
+
+
+    private removeExcludedPathRecurisve(path: string[], excludedPaths: Paths[]) {
+        let base = path.shift();
+        if (base) {
+            if (!isNaN(parseInt(base))) {
+                base = ID_PATTERN;
+            }
+            let excluded: Paths = excludedPaths.find(f => f.base == base);
+            if (excluded) {
+                this.removeExcludedPathRecurisve(path, excluded.children);
+                if (!excluded.children || excluded.children.length == 0) {
+                    excludedPaths.splice(excludedPaths.findIndex(f => f.base == base));
+                }
+
+            }
+        }
+    }
+
+    private splitUrl(url: string): string[] {
+        console.log(url);
+        url = url.replace(HTTP_PATTERN, '');
+        console.log(url);
+        url = url.replace(HTTPS_PATTERN, '');
+        let pathArray: string[] = url.split('/');
+        return pathArray;
     }
 }
 
