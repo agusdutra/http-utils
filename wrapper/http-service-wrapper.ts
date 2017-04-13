@@ -5,7 +5,6 @@ import {Injectable} from '@angular/core';
 /**
  * Clase que extiende HTTP, hace todas las llamadas igual, pero las wrappea para interceptar
  * las llamadas y poder realizar acciones personalizadas de forma genérica para todas las llamadas al backend.
- * Created by agusdutra on 3/1/17.
  */
 
 @Injectable()
@@ -24,7 +23,17 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<Response>}
      */
     request(url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
-        return super.request(url, options);
+        this.requestInterceptor(url);
+        return super.request(url, this.requestOptions(options))
+            .catch(this.onCatch)
+            .do((res: Response) => {
+                this.onSubscribeSuccess(res);
+            }, (error: any) => {
+                this.onSubscribeError(error);
+            })
+            .finally(() => {
+                this.onFinally(url);
+            });
     }
 
 
@@ -35,7 +44,7 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<>}
      */
     get(url: string, options?: RequestOptionsArgs): Observable<any> {
-        this.requestInterceptorGET();
+        this.requestInterceptorGET(url);
         return super.get(url, this.requestOptionsGET(options))
             .catch(this.onCatch)
             .do((res: Response) => {
@@ -44,7 +53,7 @@ export abstract class AbstractHttpService extends Http {
                 this.onSubscribeErrorGET(error);
             })
             .finally(() => {
-                this.onFinallyGET();
+                this.onFinallyGET(url);
             });
     }
 
@@ -57,7 +66,7 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<>}
      */
     post(url: string, body: any, options?: RequestOptionsArgs): Observable<any> {
-        this.requestInterceptorPOST();
+        this.requestInterceptorPOST(url);
         return super.post(url, body, this.requestOptionsPOST(options))
             .catch(this.onCatch)
             .do((res: Response) => {
@@ -66,7 +75,7 @@ export abstract class AbstractHttpService extends Http {
                 this.onSubscribeErrorPOST(error);
             })
             .finally(() => {
-                this.onFinallyPOST();
+                this.onFinallyPOST(url);
             });
     }
 
@@ -79,7 +88,7 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<>}
      */
     put(url: string, body: any, options?: RequestOptionsArgs): Observable<any> {
-        this.requestInterceptorPUT();
+        this.requestInterceptorPUT(url);
         return super.put(url, body, this.requestOptionsPUT(options))
             .catch(this.onCatch)
             .do((res: Response) => {
@@ -88,7 +97,7 @@ export abstract class AbstractHttpService extends Http {
                 this.onSubscribeErrorPUT(error);
             })
             .finally(() => {
-                this.onFinallyPUT();
+                this.onFinallyPUT(url);
             });
     }
 
@@ -100,7 +109,7 @@ export abstract class AbstractHttpService extends Http {
      * @returns {Observable<>}
      */
     delete(url: string, options?: RequestOptionsArgs): Observable<any> {
-        this.requestInterceptorDELETE();
+        this.requestInterceptorDELETE(url);
         return super.delete(url, this.requestOptionsDELETE(options))
             .catch(this.onCatch)
             .do((res: Response) => {
@@ -109,9 +118,59 @@ export abstract class AbstractHttpService extends Http {
                 this.onSubscribeErrorDELETE(error);
             })
             .finally(() => {
-                this.onFinallyDELETE();
+                this.onFinallyDELETE(url);
             });
     }
+
+    /**
+     * Request options.
+     * Hace set de los parametros que se envian como argumentos de las RequestOptions,
+     * esta incluye los Headers, parametros
+     * Puede recibir desde la llamada o se puede implementar
+     * para que todas las llamadas en general, o de cada uno de los tipos de Requests, tengan los mismos headers.
+     * @param options
+     * @returns {RequestOptionsArgs}
+     */
+    protected abstract requestOptions(options?: RequestOptionsArgs): RequestOptionsArgs;
+
+    protected  requestOptionsGET(options?: RequestOptionsArgs): RequestOptionsArgs {
+        return this.requestOptions(options);
+    };
+
+    protected  requestOptionsPOST(options?: RequestOptionsArgs): RequestOptionsArgs {
+        return this.requestOptions(options);
+    };
+
+    protected  requestOptionsPUT(options?: RequestOptionsArgs): RequestOptionsArgs {
+        return this.requestOptions(options);
+    };
+
+    protected  requestOptionsDELETE(options?: RequestOptionsArgs): RequestOptionsArgs {
+        return this.requestOptions(options);
+    };
+
+
+    /**
+     * Intercepta la llamada, muestra preloader
+     */
+    protected abstract requestInterceptor(url): void;
+
+    protected requestInterceptorGET(url) {
+        this.requestInterceptor(url);
+    }
+
+    protected requestInterceptorPOST(url) {
+        this.requestInterceptor(url);
+    }
+
+    protected requestInterceptorPUT(url) {
+        this.requestInterceptor(url);
+    }
+
+    protected requestInterceptorDELETE(url) {
+        this.requestInterceptor(url);
+    }
+
 
     /**
      * Error handler.
@@ -170,71 +229,22 @@ export abstract class AbstractHttpService extends Http {
     /**
      * onFinally
      */
-    protected abstract onFinally(): void;
+    protected abstract onFinally(url): void;
 
-    protected onFinallyGET(): void {
-        this.onFinally();
+    protected onFinallyGET(url): void {
+        this.onFinally(url);
     }
 
-    protected onFinallyPOST(): void {
-        this.onFinally();
+    protected onFinallyPOST(url): void {
+        this.onFinally(url);
     }
 
-    protected onFinallyPUT(): void {
-        this.onFinally();
+    protected onFinallyPUT(url): void {
+        this.onFinally(url);
     }
 
-    protected onFinallyDELETE(): void {
-        this.onFinally();
-    }
-
-    /**
-     * Request options.
-     * Hace set de los parametros que se envian como argumentos de las RequestOptions,
-     * esta incluye los Headers, parametros
-     * Puede recibir desde la llamada o se puede implementar
-     * para que todas las llamadas en general, o de cada uno de los tipos de Requests, tengan los mismos headers.
-     * @param options
-     * @returns {RequestOptionsArgs}
-     */
-    protected abstract requestOptions(options?: RequestOptionsArgs): RequestOptionsArgs;
-
-    protected  requestOptionsGET(options?: RequestOptionsArgs): RequestOptionsArgs {
-        return this.requestOptions(options);
-    };
-
-    protected  requestOptionsPOST(options?: RequestOptionsArgs): RequestOptionsArgs {
-        return this.requestOptions(options);
-    };
-
-    protected  requestOptionsPUT(options?: RequestOptionsArgs): RequestOptionsArgs {
-        return this.requestOptions(options);
-    };
-
-    protected  requestOptionsDELETE(options?: RequestOptionsArgs): RequestOptionsArgs {
-        return this.requestOptions(options);
-    };
-
-
-    /**
-     * Intercepta la llamada, muestra preloader
-     */
-    protected abstract requestInterceptor(): void;
-
-    protected requestInterceptorGET() {
-        this.requestInterceptor();
-    }
-
-    protected requestInterceptorPOST() {
-        this.requestInterceptor();
-    }
-
-    protected requestInterceptorPUT() {
-        this.requestInterceptor();
-    }
-
-    protected requestInterceptorDELETE() {
-        this.requestInterceptor();
+    protected onFinallyDELETE(url): void {
+        this.onFinally(url);
     }
 
 
