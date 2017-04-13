@@ -10,7 +10,7 @@ import {Subject, Observable} from 'rxjs';
 export const ID_PATTERN = ':id'
 export const HTTP_PATTERN = 'http://';
 export const HTTPS_PATTERN = 'https://';
-
+export const BASE_PATTERN = 'baseUrl';
 export interface Paths {
     base: string;
     children: Paths[];
@@ -59,6 +59,7 @@ export class LoaderService {
 
     public addExcludedPath(url: string) {
         let pathArray = this.splitUrl(url);
+
         this.addPathRecursive(pathArray, this.excludedPaths);
     }
 
@@ -128,9 +129,7 @@ export class LoaderService {
 
     private splitUrl(url: string): string[] {
         if (url) {
-            console.log(url);
             url = url.replace(HTTP_PATTERN, '');
-            console.log(url);
             url = url.replace(HTTPS_PATTERN, '');
             let pathArray: string[] = url.split('/');
             return pathArray;
