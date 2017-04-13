@@ -6,8 +6,6 @@ import {Subject, Observable} from 'rxjs';
  * Servicio al cual se subscriben los componentes loaders para saber el estado en el cual se encuentra
  * la aplicación con respecto a las llamadas HTTP
  *
- * Es llamado desde la implementacion de HTTP propia.
- *
  */
 @Injectable()
 export class LoaderService {
@@ -28,19 +26,23 @@ export class LoaderService {
     }
 
     /**
-     * Llamada cuando comienza ejecucion de llamada a Servicio. Setea el estado en true
+     * Funcionalidad que es llamada cuando comienza ejecución de una request HTTP a un servicio.
+     * Si recibe path a traves de parámetro y el mismo no se encuentra en la lista de excluidos, aumenta el contador y notifica a los subscriptores.
+     *
      */
-    showPreloader(url?: string) {
+    beginCall(url?: string) {
         if (!this.excludedPaths.find(f => f === url)) {
-            this.callingCount++
+            this.callingCount++;
             this.loaderSubject.next(<LoaderState>{callingCount: this.callingCount});
         }
     };
 
     /**
-     * Llamado cuando finaliza llamada a Servicio HTTP. Setea el estado en false.
+     * Funcionalidad que es llamada cuando finaliza la ejecución de una request HTTP a un servicio.
+     * Si recibe path a traves de parámetro y el mismo no se encuentra en la lista de excluidos,
+     * reduce el contador y notifica a los subscriptores.
      */
-    hidePreloader(url?: string) {
+    endCall(url?: string) {
         if (!this.excludedPaths.find(f => f === url)) {
             this.callingCount--;
             this.loaderSubject.next(<LoaderState>{callingCount: this.callingCount});
@@ -48,6 +50,10 @@ export class LoaderService {
     };
 
     addExcludedPath(url: string) {
+        this.excludedPaths.push(url);
+    }
+
+    removeExcludedPath(url: string) {
         this.excludedPaths.push(url);
     }
 }
