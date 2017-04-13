@@ -7,10 +7,9 @@ Available for download:
 npm install http-utils 
 
 
--requestInterceptor
+AbstractHttpService:
 
--onSubscribeSuccess
 
--onSubscribeError
+LoaderService:
 
--onFinally
+BlockLoaderComponent:
