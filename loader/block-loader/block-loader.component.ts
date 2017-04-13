@@ -24,7 +24,7 @@ import {LoaderService, LoaderState} from "../loader.service";
 })
 export class BlockLoaderComponent implements OnInit, OnDestroy {
 
-    private show = false;
+    show = false;
     private subscription: Subscription;
 
     @Input()
