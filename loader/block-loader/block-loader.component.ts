@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, OnDestroy} from '@angular/core';
+import {Component, OnInit, Input, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
 import {LoaderService, LoaderState} from "../loader.service";
 
@@ -18,54 +18,55 @@ import {LoaderService, LoaderState} from "../loader.service";
  *
  */
 @Component({
-    selector: 'block-loader',
-    templateUrl: './block-loader.component.html',
-    styleUrls: ['./block-loader.component.scss']
+  selector: 'block-loader',
+  templateUrl: './block-loader.component.html',
+  styleUrls: ['./block-loader.component.scss']
 })
 export class BlockLoaderComponent implements OnInit, OnDestroy {
 
-    private subscription: Subscription;
+  private subscription: Subscription;
 
-    /**
-     * set true cuando no se quiere mostrar el loader por más que se esté realizando una llamada.
-     * @type {boolean}
-     */
-    @Input()
-    enabled: boolean = true;
+  /**
+   * set true cuando no se quiere mostrar el loader por más que se esté realizando una llamada.
+   * @type {boolean}
+   */
+  @Input()
+  enabled: boolean = true;
 
-    showLoader: boolean = false;
+  showLoader: boolean = false;
 
-    /*    @Input()
-     overlayBackground: string = "#BABABA";*/
+  /*    @Input()
+   overlayBackground: string = "#BABABA";*/
 
-    /**
-     * clases que se utilizan para el icono que se muestra como loader.
-     * @type {string}
-     */
-    @Input()
-    iconClasses: string = "fa fa-circle-o-notch fa-spin fa-3x fa-fw";
+  /**
+   * clases que se utilizan para el icono que se muestra como loader.
+   * @type {string}
+   */
+  @Input()
+  iconClasses: string = "fa fa-circle-o-notch fa-spin fa-3x fa-fw";
 
 
-    constructor(private loaderService: LoaderService) {
-        this.enabled = true;
-        this.showLoader = false;
-    }
+  constructor(private loaderService: LoaderService, private cdRef: ChangeDetectorRef) {
+    this.enabled = true;
+    this.showLoader = false;
+  }
 
-    ngOnInit() {
-        this.subscription = this.loaderService.loaderState.subscribe((state: LoaderState) => {
-            this.showLoader = state.callingCount != 0 && this.enabled;
-        });
-    }
+  ngOnInit() {
+    this.subscription = this.loaderService.loaderState.subscribe((state: LoaderState) => {
+      this.showLoader = state.callingCount != 0 && this.enabled;
+      this.cdRef.detectChanges();
+    });
+  }
 
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
-    enable() {
-        this.enabled = true;
-    }
+  enable() {
+    this.enabled = true;
+  }
 
-    disable() {
-        this.enabled = false;
-    }
+  disable() {
+    this.enabled = false;
+  }
 }

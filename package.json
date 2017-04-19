@@ -1,6 +1,6 @@
 {
   "name": "http-service-wrapper",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.3",
   "description": "Abstract HTTP service implementation with interception points for methord GET, POST, PUT, DELETE",
   "main": "index.js",
   "dependencies": {
