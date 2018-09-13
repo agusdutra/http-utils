@@ -2,6 +2,8 @@
 
 Extensión de @angular/http con puntos de intercepción para métodos GET, POST, PUT y DELETE.
 
+Desde la versión 4.3  de angular y el HttpClientModule con interceptores, no tiene sentido la utilización de este proyecto.
+
 > npm install http-utils
 
 
